@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1>Resultados de los Endpoints</h1>
+        
+    <p id="texto">Cargando el texto...</p>
+    <p id="json">Cargando el JSON...</p>
+    <p id="html">Cargando el HTML...</p>
+    <p id="redireccion">Cargando la redirección...</p>
+    <p id="error">Esperando error...</p>
+    
+    <script>
+        fetch('/texto')
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('texto').textContent = data;
+            })
+            .catch(error => console.error('Error en /texto:', error));
+    
+        fetch('/json')
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('json').textContent = `Mensaje: ${data.mensaje}`;
+            })
+            .catch(error => console.error('Error en /json:', error));
+    
+        fetch('/html')
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('html').innerHTML = data;
+            })
+            .catch(error => console.error('Error en /html:', error));
+    
+        fetch('/redirigir', { redirect: 'manual' })
+            .then(response => {
+                if (response.status === 302) {
+                    document.getElementById('redireccion').textContent = 'Redirigido con éxito!';
+                } else {
+                    return response.text().then(data => {
+                        document.getElementById('redireccion').textContent = data;
+                    });
+                }
+            })
+            .catch(error => console.error('Error en /redirigir:', error));
+    
+        fetch('/error')
+            .then(response => {
+                if (!response.ok) {
+                    document.getElementById('error').textContent = `Error ${response.status}: ${response.statusText}`;
+                } else {
+                    return response.text().then(data => {
+                        document.getElementById('error').textContent = data;
+                    });
+                }
+            })
+            .catch(error => console.error('Error en /error:', error));
+    </script>
+</body>
+</html>
